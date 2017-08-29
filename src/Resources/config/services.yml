@@ -1,0 +1,10 @@
+services:
+    fgir_fos_rest_utils.crud_helper.doctrine_orm:
+       class: Fgir\FosRestUtilsBundle\CrudHelper\DoctrineOrmHelper
+       autowire: true
+
+    fgir_fos_rest_utils.request_listener:
+        class: Fgir\FosRestUtilsBundle\EventListener\KernelListener
+        arguments: ["@logger", "%fgir_fos_rest_utils_log_api_calls%"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
