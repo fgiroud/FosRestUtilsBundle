@@ -25,11 +25,7 @@ class Utils
         foreach ($data->all() as $child) {
             $errs = $child->getErrors();
             if (count($errs)) {
-                $result[$child->getName()] = [];
-
-                foreach ($errs as $error) {
-                    $result[$child->getName()][] = $error->getMessage();
-                }
+                $result[$child->getName()] = $errs[0]->getMessage();
             }
         }
 
