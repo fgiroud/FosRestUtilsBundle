@@ -44,7 +44,15 @@ class DoctrineOrmHelper
             $qb = $this->createQueryBuilder($model);
             $this->queryBuilderUpdater->addFilterConditions($form, $qb);
 
-            $qb->orderBy('e.id', 'DESC');
+            $sorting = 'id';
+            $direction = 'DESC';
+
+            if (array_key_exists('sort', 'filterValues')) {
+                $querySortingParameter = $filterValues['sort'];
+                $direction = substr($querySortingParameter, 0, 1) == '-' ? 'DESC' : 'ASC';
+                $sorting = substr($querySortingParameter, 0, 1) == '-' ? substr($querySortingParameter, 1) : $querySortingParameter;
+            }
+            $qb->orderBy($sorting, $direction);
 
             $limit = isset($filterValues['limit']) ? $filterValues['limit'] : 10;
             $page = isset($filterValues['page']) ? $filterValues['page'] : 1;
