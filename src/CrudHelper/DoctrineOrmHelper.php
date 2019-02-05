@@ -52,7 +52,7 @@ class DoctrineOrmHelper
                 $direction = substr($querySortingParameter, 0, 1) == '-' ? 'DESC' : 'ASC';
                 $sorting = substr($querySortingParameter, 0, 1) == '-' ? substr($querySortingParameter, 1) : $querySortingParameter;
             }
-            $qb->orderBy($sorting, $direction);
+            $qb->orderBy('e.' . $sorting, $direction);
 
             $limit = isset($filterValues['limit']) ? $filterValues['limit'] : 10;
             $page = isset($filterValues['page']) ? $filterValues['page'] : 1;
