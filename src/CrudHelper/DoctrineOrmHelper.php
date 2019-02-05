@@ -47,7 +47,7 @@ class DoctrineOrmHelper
             $sorting = 'id';
             $direction = 'DESC';
 
-            if (array_key_exists('sort', 'filterValues')) {
+            if (is_array($filterValues) && array_key_exists('sort', 'filterValues')) {
                 $querySortingParameter = $filterValues['sort'];
                 $direction = substr($querySortingParameter, 0, 1) == '-' ? 'DESC' : 'ASC';
                 $sorting = substr($querySortingParameter, 0, 1) == '-' ? substr($querySortingParameter, 1) : $querySortingParameter;
