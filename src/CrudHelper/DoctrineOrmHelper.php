@@ -2,7 +2,9 @@
 
 namespace Fgir\FosRestUtilsBundle\CrudHelper;
 
+use Doctrine\Common\Inflector\Inflector;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Query\QueryException;
 use Knp\Component\Pager\PaginatorInterface;
 use Lexik\Bundle\FormFilterBundle\Filter\FilterBuilderUpdater;
 use Symfony\Component\Form\FormFactory;
@@ -30,8 +32,9 @@ class DoctrineOrmHelper
      * @param  array $filterValues
      * @return array
      */
-    public function getMultipleDocuments($model, $formType, $filterValues)
+    public function getMultipleDocuments($model, $formType, $filterValues, $sort = '-id')
     {
+
         $form = $this->formFactory->createNamed('', $formType);
         $form->submit($filterValues);
 
@@ -44,24 +47,35 @@ class DoctrineOrmHelper
             $qb = $this->createQueryBuilder($model);
             $this->queryBuilderUpdater->addFilterConditions($form, $qb);
 
-            $sorting = 'id';
-            $direction = 'DESC';
+            $direction = substr($sort, 0, 1) == '-' ? 'DESC' : 'ASC';
+            $sort = substr($sort, 0, 1) == '-' ? substr($sort, 1) : $sort;
 
-            if (is_array($filterValues) && array_key_exists('sort', 'filterValues')) {
-                $querySortingParameter = $filterValues['sort'];
-                $direction = substr($querySortingParameter, 0, 1) == '-' ? 'DESC' : 'ASC';
-                $sorting = substr($querySortingParameter, 0, 1) == '-' ? substr($querySortingParameter, 1) : $querySortingParameter;
-            }
-            $qb->orderBy('e.' . $sorting, $direction);
+            $sort = (new Inflector())->camelize($sort);
+
+            $qb->orderBy('e.' . $sort, $direction);
 
             $limit = isset($filterValues['limit']) ? $filterValues['limit'] : 10;
             $page = isset($filterValues['page']) ? $filterValues['page'] : 1;
 
-            $pagination = $this->paginator->paginate(
-                $qb,
-                $page,
-                $limit
-            );
+            try {
+                $pagination = $this->paginator->paginate(
+                    $qb,
+                    $page,
+                    $limit
+                );
+            } catch (QueryException $e) {
+                // code 400 is returned if we see an error message like
+                // [Semantical Error] line 0, col 50 near 'ids ASC': Error: Class AppBundle\\Entity\\Field has no field or association named ids
+                if (strpos($e->getMessage(), 'has no field or association named') !== false) {
+                    return [
+                        'errors' => [
+                            'sort' => 'Invalid sort.',
+                        ],
+                        'code' => 400,
+                    ];
+                }
+                throw $e;
+            }
 
             $documents = [];
             foreach ($pagination as $document) {
