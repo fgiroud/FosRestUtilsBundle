@@ -23,9 +23,17 @@ class Utils
         }
 
         foreach ($data->all() as $child) {
-            $errs = $child->getErrors();
-            if (count($errs)) {
-                $result[$child->getName()] = $errs[0]->getMessage();
+            if ($child->getConfig()->getCompound()) {
+                $errs = self::convertFormToArray($child);
+                if (count($errs)) {
+                    $result[$child->getName()] = $errs;
+                }
+
+            } else {
+                $errs = $child->getErrors();
+                if (count($errs)) {
+                    $result[$child->getName()] = $errs[0]->getMessage();
+                }
             }
         }
 
