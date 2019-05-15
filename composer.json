@@ -1,6 +1,6 @@
 {
     "name": "fgir/fos-rest-utils-bundle",
-    "version": "0.1.7",
+    "version": "0.1.8",
     "description": "FosRestBundle utilities and helpers",
     "keywords": ["utils"],
     "homepage": "https://github.com/fgiroud/FosRestUtilsBundle",
