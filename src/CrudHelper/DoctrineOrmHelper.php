@@ -101,12 +101,14 @@ class DoctrineOrmHelper
         ];
     }
 
-    public function createDocument($model, $values, $formType)
+    public function createDocument($model, $values, $formType, $newDocument = null)
     {
-        $className = $this->om->getRepository($model)->getClassName();
-        $newDocument = new $className();
-        $form = $this->formFactory->createNamed('', $formType, $newDocument);
+        if ($newDocument === null) {
+            $className = $this->om->getRepository($model)->getClassName();
+            $newDocument = new $className();
+        }
 
+        $form = $this->formFactory->createNamed('', $formType, $newDocument);
         $form->submit($values);
 
         if ($form->isSubmitted() && $form->isValid()) {

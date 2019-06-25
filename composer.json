@@ -1,16 +1,14 @@
 {
     "name": "fgir/fos-rest-utils-bundle",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "FosRestBundle utilities and helpers",
     "keywords": ["utils"],
     "homepage": "https://github.com/fgiroud/FosRestUtilsBundle",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Florian Giroud",
-            "email": "florian.giroud@gmail.com"
-        }
-    ],
+    "authors": [{
+        "name": "Florian Giroud",
+        "email": "florian.giroud@gmail.com"
+    }],
     "require": {
         "php": ">=7.0.0"
     },
